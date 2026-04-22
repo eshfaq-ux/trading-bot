@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>PRIMETRADE · ORDER TERMINAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Rajdhani:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --neon-cyan: #00f5ff;
+    --neon-green: #00ff88;
+    --neon-pink: #ff006e;
+    --neon-yellow: #ffea00;
+    --bg: #020810;
+    --bg2: #040d1a;
+    --panel: #060f1f;
+    --border: #0d2a4a;
+    --text: #eaf4ff;
+    --dim: #7ab8d4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,245,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,245,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Scanline effect */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,0,0,0.08) 2px,
+      rgba(0,0,0,0.08) 4px
+    );
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 24px 20px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 20px;
+    margin-bottom: 32px;
+  }
+
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.5rem;
+    letter-spacing: 0.15em;
+    color: var(--neon-cyan);
+    text-shadow: 0 0 20px rgba(0,245,255,0.6), 0 0 40px rgba(0,245,255,0.3);
+  }
+
+  .logo span { color: var(--neon-green); }
+
+  .header-meta {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--dim);
+    text-align: right;
+    line-height: 1.8;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--neon-green);
+    box-shadow: 0 0 8px var(--neon-green);
+    margin-right: 6px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  /* ── LAYOUT ── */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } }
+
+  /* ── PANEL ── */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--neon-cyan), transparent);
+  }
+
+  .panel-title {
+    font-family: 'Orbitron', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    color: #00e5f0;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  /* ── FORM ── */
+  .field { margin-bottom: 16px; }
+
+  label {
+    display: block;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.15em;
+    color: #a0cce0;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  input, select {
+    width: 100%;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: #ffffff;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.95rem;
+    padding: 10px 14px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+  }
+
+  input:focus, select:focus {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 0 12px rgba(0,245,255,0.2), inset 0 0 8px rgba(0,245,255,0.05);
+  }
+
+  input::placeholder { color: #3d6a82; }
+
+  select option { background: var(--bg2); color: #ffffff; }
+
+  /* Side toggle */
+  .side-toggle {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .side-btn {
+    padding: 10px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    background: var(--bg2);
+    color: var(--dim);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+
+  .side-btn.buy.active {
+    border-color: var(--neon-green);
+    color: var(--neon-green);
+    background: rgba(0,255,136,0.08);
+    box-shadow: 0 0 12px rgba(0,255,136,0.2);
+  }
+
+  .side-btn.sell.active {
+    border-color: var(--neon-pink);
+    color: var(--neon-pink);
+    background: rgba(255,0,110,0.08);
+    box-shadow: 0 0 12px rgba(255,0,110,0.2);
+  }
+
+  .side-btn:hover { opacity: 0.8; }
+
+  /* Hidden radio */
+  .side-radio { display: none; }
+
+  /* Submit */
+  .btn-submit {
+    width: 100%;
+    margin-top: 8px;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid var(--neon-cyan);
+    border-radius: 3px;
+    color: var(--neon-cyan);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-submit::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,245,255,0.1), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .btn-submit:hover {
+    box-shadow: 0 0 20px rgba(0,245,255,0.3), inset 0 0 20px rgba(0,245,255,0.05);
+    text-shadow: 0 0 10px var(--neon-cyan);
+  }
+
+  .btn-submit:hover::before { opacity: 1; }
+  .btn-submit:active { transform: scale(0.99); }
+
+  /* ── RESPONSE PANEL ── */
+  .response-panel {
+    grid-column: 1 / -1;
+  }
+
+  .response-box {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    line-height: 1.9;
+    min-height: 120px;
+    padding: 16px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+  }
+
+  .response-box.empty { color: #5a8fa8; }
+
+  .tag-success { color: var(--neon-green); }
+  .tag-error   { color: var(--neon-pink); }
+  .tag-label   { color: #7ab8d4; }
+  .tag-value   { color: var(--neon-cyan); }
+  .tag-status-filled { color: var(--neon-green); }
+  .tag-status-new    { color: var(--neon-yellow); }
+
+  /* ── LOG PANEL ── */
+  .log-panel { grid-column: 1 / -1; }
+
+  .log-box {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    line-height: 1.7;
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 14px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    color: var(--dim);
+  }
+
+  .log-box::-webkit-scrollbar { width: 4px; }
+  .log-box::-webkit-scrollbar-track { background: var(--bg); }
+  .log-box::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .log-info    { color: #4a9eff; }
+  .log-debug   { color: #5a8fa8; }
+  .log-error   { color: var(--neon-pink); }
+  .log-success { color: var(--neon-green); }
+
+  /* ── TICKER ── */
+  .ticker-bar {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--dim);
+    border-top: 1px solid var(--border);
+    margin-top: 32px;
+    padding-top: 12px;
+    display: flex;
+    gap: 32px;
+    overflow: hidden;
+  }
+
+  .ticker-item span { color: var(--neon-cyan); margin-left: 6px; }
+
+  /* Loading spinner */
+  .spinner {
+    display: none;
+    width: 14px; height: 14px;
+    border: 2px solid var(--border);
+    border-top-color: var(--neon-cyan);
+    border-radius: 50%;
+    animation: spin 0.6s linear infinite;
+    margin: 0 auto;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .btn-submit.loading .btn-text { display: none; }
+  .btn-submit.loading .spinner  { display: block; }
+
+  /* Credentials row */
+  .creds-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 500px) { .creds-grid { grid-template-columns: 1fr; } }
+
+  /* Corner decoration */
+  .corner-tl, .corner-br {
+    position: absolute;
+    width: 12px; height: 12px;
+    border-color: var(--neon-cyan);
+    border-style: solid;
+    opacity: 0.4;
+  }
+  .corner-tl { top: 8px; left: 8px; border-width: 1px 0 0 1px; }
+  .corner-br { bottom: 8px; right: 8px; border-width: 0 1px 1px 0; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">PRIME<span>TRADE</span> <span style="font-size:0.6em;color:var(--dim)">·</span> ORDER TERMINAL</div>
+    <div class="header-meta">
+      <div><span class="status-dot"></span>TESTNET CONNECTED</div>
+      <div>BINANCE SPOT · testnet.binance.vision</div>
+      <div id="clock">--:--:-- UTC</div>
+    </div>
+  </header>
+
+  <form id="orderForm" method="POST" action="/place_order">
+  <div class="grid">
+
+    <!-- ORDER FORM -->
+    <div class="panel">
+      <div class="corner-tl"></div><div class="corner-br"></div>
+      <div class="panel-title">⬡ Order Configuration</div>
+
+      <div class="field">
+        <label>Symbol</label>
+        <input type="text" name="symbol" id="symbol" placeholder="BTCUSDT" value="BTCUSDT" required autocomplete="off" style="text-transform:uppercase"/>
+      </div>
+
+      <div class="field">
+        <label>Side</label>
+        <div class="side-toggle">
+          <div class="side-btn buy active" onclick="setSide('BUY')">▲ BUY</div>
+          <div class="side-btn sell" onclick="setSide('SELL')">▼ SELL</div>
+        </div>
+        <input type="hidden" name="side" id="side" value="BUY"/>
+      </div>
+
+      <div class="field">
+        <label>Order Type</label>
+        <select name="order_type" id="order_type" onchange="togglePrice()">
+          <option value="MARKET">MARKET</option>
+          <option value="LIMIT">LIMIT</option>
+          <option value="STOP_LOSS_LIMIT">STOP_LOSS_LIMIT</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Quantity</label>
+        <input type="number" name="quantity" placeholder="0.001" step="any" min="0" required/>
+      </div>
+
+      <div class="field" id="price_field" style="display:none">
+        <label>Price / Stop Price</label>
+        <input type="number" name="price" id="price" placeholder="0.00" step="any" min="0"/>
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <span class="btn-text">⚡ EXECUTE ORDER</span>
+        <div class="spinner"></div>
+      </button>
+    </div>
+
+    <!-- CREDENTIALS -->
+    <div class="panel">
+      <div class="corner-tl"></div><div class="corner-br"></div>
+      <div class="panel-title">⬡ API Credentials</div>
+
+      <div class="field">
+        <label>API Key</label>
+        <input type="text" name="api_key" placeholder="Enter API Key" value="{{ api_key }}" autocomplete="off"/>
+      </div>
+
+      <div class="field">
+        <label>API Secret</label>
+        <input type="password" name="api_secret" placeholder="Enter API Secret" value="{{ api_secret }}" autocomplete="off"/>
+      </div>
+
+      <div class="field" style="margin-top:24px">
+        <label>Network</label>
+        <input type="text" value="Binance Spot Testnet" readonly style="color:var(--dim);cursor:default"/>
+      </div>
+
+      <div class="field">
+        <label>Base URL</label>
+        <input type="text" value="https://testnet.binance.vision" readonly style="color:var(--dim);font-size:0.75rem;cursor:default"/>
+      </div>
+
+      {% if account_balance is not none %}
+      <div class="field" style="margin-top:8px">
+        <label>BTC Balance</label>
+        <input type="text" value="{{ account_balance }}" readonly style="color:var(--neon-green);cursor:default"/>
+      </div>
+      {% endif %}
+    </div>
+
+    <!-- RESPONSE -->
+    <div class="panel response-panel">
+      <div class="corner-tl"></div><div class="corner-br"></div>
+      <div class="panel-title">⬡ Order Response</div>
+      <div class="response-box {% if not response %}empty{% endif %}">
+        {% if not response %}
+          <span style="color:var(--dim)">// Awaiting order execution...</span>
+        {% else %}
+          {% if response.error %}
+            <div class="tag-error">✖ ERROR</div>
+            <div><span class="tag-label">MSG ·· </span><span class="tag-error">{{ response.error }}</span></div>
+          {% else %}
+            <div class="tag-success">✔ ORDER ACCEPTED</div>
+            <div>──────────────────────────────────────</div>
+            <div><span class="tag-label">ORDER ID ·· </span><span class="tag-value">{{ response.orderId }}</span></div>
+            <div><span class="tag-label">SYMBOL ···· </span><span class="tag-value">{{ response.symbol }}</span></div>
+            <div><span class="tag-label">SIDE ······ </span><span class="tag-value">{{ response.side }}</span></div>
+            <div><span class="tag-label">TYPE ······ </span><span class="tag-value">{{ response.type }}</span></div>
+            <div><span class="tag-label">STATUS ···· </span>
+              <span class="{% if response.status == 'FILLED' %}tag-status-filled{% else %}tag-status-new{% endif %}">{{ response.status }}</span>
+            </div>
+            <div><span class="tag-label">EXEC QTY ·· </span><span class="tag-value">{{ response.executedQty }}</span></div>
+            {% if response.fills %}
+            <div><span class="tag-label">AVG PRICE · </span><span class="tag-value">{{ response.fills[0].price }}</span></div>
+            {% endif %}
+            <div><span class="tag-label">CLIENT ID · </span><span class="tag-value">{{ response.clientOrderId }}</span></div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- LOG -->
+    <div class="panel log-panel">
+      <div class="corner-tl"></div><div class="corner-br"></div>
+      <div class="panel-title">⬡ System Log</div>
+      <div class="log-box" id="logBox">
+        {% for line in logs %}
+          {% if '[INFO]' in line %}
+            <div class="log-info">{{ line }}</div>
+          {% elif '[ERROR]' in line %}
+            <div class="log-error">{{ line }}</div>
+          {% elif '[DEBUG]' in line %}
+            <div class="log-debug">{{ line }}</div>
+          {% else %}
+            <div>{{ line }}</div>
+          {% endif %}
+        {% endfor %}
+        {% if not logs %}
+          <span style="color:var(--dim)">// No log entries yet...</span>
+        {% endif %}
+      </div>
+    </div>
+
+  </div>
+  </form>
+
+  <!-- TICKER -->
+  <div class="ticker-bar">
+    <div class="ticker-item">NETWORK<span>TESTNET</span></div>
+    <div class="ticker-item">EXCHANGE<span>BINANCE SPOT</span></div>
+    <div class="ticker-item">MODE<span>PAPER TRADING</span></div>
+    <div class="ticker-item">VERSION<span>1.0.0</span></div>
+  </div>
+
+</div>
+
+<script>
+  // Clock
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clock').textContent =
+      now.toUTCString().split(' ')[4] + ' UTC';
+  }
+  setInterval(updateClock, 1000);
+  updateClock();
+
+  // Side toggle
+  function setSide(side) {
+    document.getElementById('side').value = side;
+    document.querySelectorAll('.side-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector('.side-btn.' + side.toLowerCase()).classList.add('active');
+  }
+
+  // Price field visibility
+  function togglePrice() {
+    const t = document.getElementById('order_type').value;
+    const pf = document.getElementById('price_field');
+    const pi = document.getElementById('price');
+    const show = t === 'LIMIT' || t === 'STOP_LOSS_LIMIT';
+    pf.style.display = show ? 'block' : 'none';
+    pi.required = show;
+  }
+
+  // Loading state
+  document.getElementById('orderForm').addEventListener('submit', function() {
+    const btn = document.getElementById('submitBtn');
+    btn.classList.add('loading');
+  });
+
+  // Symbol uppercase
+  document.getElementById('symbol').addEventListener('input', function() {
+    this.value = this.value.toUpperCase();
+  });
+
+  // Scroll log to bottom
+  const lb = document.getElementById('logBox');
+  if (lb) lb.scrollTop = lb.scrollHeight;
+</script>
+</body>
+</html>
