@@ -1,12 +1,35 @@
-# Binance Spot Testnet Trading Bot
+<div align="center">
 
-A Python trading bot with both a CLI and a web UI to place orders on the [Binance Spot Testnet](https://testnet.binance.vision).
+# 🤖 Binance Spot Testnet Trading Bot
 
-> **Note:** The Binance Futures Testnet (`testnet.binancefuture.com`) was taken offline by Binance as part of an ongoing upgrade ([official announcement](https://www.binance.com/en/support/announcement/detail/616402d041c74000bc78282018bc62d4)). This bot uses the Binance Spot Testnet which has an identical API structure, authentication mechanism, and order types.
+**A Python trading bot with CLI and Web UI to place orders on the Binance Spot Testnet.**
+
+[![Python](https://img.shields.io/badge/Python-3.x-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![Flask](https://img.shields.io/badge/Flask-Web%20UI-black?logo=flask)](https://flask.palletsprojects.com/)
+[![Testnet](https://img.shields.io/badge/Binance-Spot%20Testnet-yellow?logo=binance)](https://testnet.binance.vision)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
+</div>
 
 ---
 
-## Project Structure
+> **⚠️ Note:** The Binance Futures Testnet (`testnet.binancefuture.com`) was taken offline by Binance as part of an ongoing upgrade ([official announcement](https://www.binance.com/en/support/announcement/detail/616402d041c74000bc78282018bc62d4)). This bot uses the Binance **Spot** Testnet which has an identical API structure, authentication mechanism, and order types.
+
+---
+
+## ✨ Features
+
+- ✅ Place **MARKET**, **LIMIT**, and **STOP_LOSS_LIMIT** orders
+- ✅ Supports both **BUY** and **SELL** sides
+- ✅ Clean **CLI** interface via `argparse`
+- ✅ Cyber neon **Web UI** built with Flask
+- ✅ HMAC-SHA256 signed REST API calls
+- ✅ Structured logging to file + console
+- ✅ Input validation with clear error messages
+
+---
+
+## 📁 Project Structure
 
 ```
 trading_bot/
@@ -27,7 +50,7 @@ trading_bot/
 
 ---
 
-## Setup
+## 🚀 Setup
 
 ### 1. Get Testnet API Credentials
 
@@ -66,7 +89,7 @@ export BINANCE_API_SECRET=your_api_secret
 
 ---
 
-## How to Run
+## ▶️ How to Run
 
 ### Option A — CLI
 
@@ -91,7 +114,7 @@ Open **http://localhost:5000** in your browser.
 
 ---
 
-## CLI Output Example
+## 🖥️ CLI Output Example
 
 ```
 ── Order Request ──────────────────────────
@@ -112,16 +135,28 @@ Open **http://localhost:5000** in your browser.
 
 ---
 
-## Logging
+## 📋 Order Types
 
-All API requests, responses, and errors are logged to `trading_bot.log`.
-
-- File: `DEBUG` level (full request/response bodies)
-- Console: `WARNING` level (errors only)
+| Type | Description | Price Required |
+|------|-------------|----------------|
+| `MARKET` | Executes immediately at market price | ❌ |
+| `LIMIT` | Executes at specified price or better | ✅ |
+| `STOP_LOSS_LIMIT` | Triggers a limit order when stop price is hit | ✅ |
 
 ---
 
-## Assumptions
+## 📝 Logging
+
+All API requests, responses, and errors are logged to `trading_bot.log`.
+
+| Handler | Level | Output |
+|---------|-------|--------|
+| File | `DEBUG` | Full request/response bodies |
+| Console | `WARNING` | Errors only |
+
+---
+
+## ⚙️ Assumptions
 
 - Uses Binance Spot Testnet (`https://testnet.binance.vision`) due to Futures Testnet being offline
 - `STOP_LOSS_LIMIT` uses `--price` as both the stop trigger and limit price
