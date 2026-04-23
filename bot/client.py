@@ -66,7 +66,12 @@ class BinanceClient:
             params["price"] = fmt(price)
             params["timeInForce"] = "GTC"
         if order_type.upper() == "STOP_LOSS_LIMIT":
+            # stopPrice triggers the order; price is the limit price (slightly worse)
+            if side.upper() == "BUY":
+                limit_price = round(price * 1.001, 2)
+            else:
+                limit_price = round(price * 0.999, 2)
             params["stopPrice"] = fmt(price)
-            params["price"] = fmt(price)
+            params["price"] = fmt(limit_price)
             params["timeInForce"] = "GTC"
         return self._request("POST", "/api/v3/order", params)

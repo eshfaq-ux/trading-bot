@@ -469,12 +469,12 @@
             <div>──────────────────────────────────────</div>
             <div><span class="tag-label">ORDER ID ·· </span><span class="tag-value">{{ response.orderId }}</span></div>
             <div><span class="tag-label">SYMBOL ···· </span><span class="tag-value">{{ response.symbol }}</span></div>
-            <div><span class="tag-label">SIDE ······ </span><span class="tag-value">{{ response.side }}</span></div>
-            <div><span class="tag-label">TYPE ······ </span><span class="tag-value">{{ response.type }}</span></div>
+            <div><span class="tag-label">SIDE ······ </span><span class="tag-value">{{ response.side or '—' }}</span></div>
+            <div><span class="tag-label">TYPE ······ </span><span class="tag-value">{{ response.type or '—' }}</span></div>
             <div><span class="tag-label">STATUS ···· </span>
-              <span class="{% if response.status == 'FILLED' %}tag-status-filled{% else %}tag-status-new{% endif %}">{{ response.status }}</span>
+              <span class="{% if response.status == 'FILLED' %}tag-status-filled{% else %}tag-status-new{% endif %}">{{ response.status or 'NEW' }}</span>
             </div>
-            <div><span class="tag-label">EXEC QTY ·· </span><span class="tag-value">{{ response.executedQty }}</span></div>
+            <div><span class="tag-label">EXEC QTY ·· </span><span class="tag-value">{{ response.executedQty or '0.00000000' }}</span></div>
             {% if response.fills %}
             <div><span class="tag-label">AVG PRICE · </span><span class="tag-value">{{ response.fills[0].price }}</span></div>
             {% endif %}
